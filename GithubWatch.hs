@@ -1,11 +1,12 @@
 {-# LANGUAGE OverloadedStrings #-}
+import Control.Applicative
 import Data.Aeson (decode)
 import Data.ByteString as B
+import Data.Maybe (fromMaybe)
 import qualified Data.ByteString.Char8 as BC
 import qualified Data.ByteString.Lazy as L
 import qualified Data.ByteString.Lazy.Char8 as BLC
 import qualified Network.HTTP.Conduit as HC
-import Control.Monad.IO.Class (liftIO)
 
 import qualified Query as Q
 import qualified Result as R
@@ -30,12 +31,16 @@ searchGithub q = HC.withManager $ \ m -> do
             response <- HC.httpLbs postRes m
             return (Just response)
 
+decodeResponse ::  HC.Response L.ByteString -> R.Result
+decodeResponse  = fromMaybe R.emptyResult . decode . HC.responseBody
+
+query0 :: Q.Query
+query1 :: Q.Query
+query0 = Q.Query "vim+colorscheme" Q.Updated Q.Desc
+query1 = Q.Query "vim+color+scheme" Q.Updated Q.Desc
+
 main = do
-    r0 <- searchGithub (Q.Query "vim+colorscheme" Q.Updated Q.Desc)
-    case r0 of
-        Nothing -> print "Hi"
-        Just res -> do
-            let results =  (decode $ HC.responseBody res) :: (Maybe R.Result)
-            case results of
-                Nothing -> print "oops"
-                Just reps -> R.printRecents 10 reps
+    r0 <- decodeResponse . fromMaybe undefined <$> searchGithub query0
+    r1 <- decodeResponse . fromMaybe undefined <$> searchGithub query1
+    let results = R.mergeResults r0 r1
+    R.printRecents 10 results

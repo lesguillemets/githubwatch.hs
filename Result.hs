@@ -14,6 +14,14 @@ data Result = Result {
     _items :: [Item]
 } deriving (Show)
 
+emptyResult :: Result
+emptyResult = Result 0 False []
+
+mergeResults :: Result -> Result -> Result
+mergeResults (Result c0 b0 i0) (Result c1 b1 i1) =
+        Result (c0+c1) (b0&&b1) (i0++i1)
+
+
 instance FromJSON Result where
     parseJSON (Ae.Object v) =
         Result <$> v .: "total_count"
