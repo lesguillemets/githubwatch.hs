@@ -36,8 +36,8 @@ decodeResponse  = fromMaybe R.emptyResult . decode . HC.responseBody
 
 query0 :: Q.Query
 query1 :: Q.Query
-query0 = Q.Query "vim+colorscheme" Q.Updated Q.Desc
-query1 = Q.Query "vim+color+scheme" Q.Updated Q.Desc
+query0 = Q.Query "vim colorscheme" Q.Updated Q.Desc
+query1 = Q.Query "vim color scheme" Q.Updated Q.Desc
 
 main = do
     r0 <- decodeResponse . fromMaybe undefined <$> searchGithub query0
