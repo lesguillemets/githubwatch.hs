@@ -19,8 +19,16 @@ emptyResult = Result 0 False []
 
 mergeResults :: Result -> Result -> Result
 mergeResults (Result c0 b0 i0) (Result c1 b1 i1) =
-        Result (c0+c1) (b0&&b1) (i0++i1)
-
+        Result (c0+c1-dups) (b0&&b1) merged
+        where
+            (dups, merged) = m 0 (sortWith _id i0) (sortWith _id i1) []
+            m n i0s [] mgd = (n,mgd ++ i0s)
+            m n [] i1s mgd = (n,mgd ++ i1s)
+            m n iss@(i:is) jss@(j:js) mgd =
+                case compare (_id i) (_id j) of
+                    EQ -> m (n+1) is js (i:mgd)
+                    GT -> m n iss js (j:mgd)
+                    LT -> m n is jss (i:mgd)
 
 instance FromJSON Result where
     parseJSON (Ae.Object v) =
