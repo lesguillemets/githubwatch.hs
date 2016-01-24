@@ -3,6 +3,7 @@ import Control.Applicative
 import Data.Aeson (decode)
 import Data.ByteString as B
 import Data.Maybe (fromMaybe)
+import Data.Function (on)
 import qualified Data.ByteString.Char8 as BC
 import qualified Data.ByteString.Lazy as L
 import qualified Data.ByteString.Lazy.Char8 as BLC
@@ -42,5 +43,5 @@ query1 = Q.Query "vim color scheme" Q.Updated Q.Desc
 main = do
     r0 <- decodeResponse . fromMaybe undefined <$> searchGithub query0
     r1 <- decodeResponse . fromMaybe undefined <$> searchGithub query1
-    let results = R.mergeResults r0 r1
+    let results = R.mergeResults (compare `on` R._pushedAt) r0 r1
     R.printRecents 10 results
