@@ -38,13 +38,13 @@ instance FromJSON Result where
     parseJSON _ = error "fail at Result"
 
 printRecents :: Int -> Result -> IO()
-printRecents n = mapM_ (putStrLn . showInfo) . take n . reverse . sortWith _updatedAt . _items
+printRecents n = mapM_ (putStrLn . showInfo) . take n . reverse . sortWith _pushedAt . _items
 
 showInfo :: Item -> String
 showInfo i = unlines [
         unwords [_name i, "  --", _description i],
         _htmlUrl i,
-        "      " ++ _updatedAt i
+        "      " ++ _pushedAt i
     ]
 
 data Item = Item {
