@@ -5,7 +5,7 @@ synopsis:            Search github for recently updated repos for a given query.
 license:             MIT
 license-file:        LICENSE
 author:              lesguillemets
-maintainer:          lesguillemets@users.noreply.github.com
+maintainer:          kgkacko+github@gmail.com
 -- copyright:           
 -- category:            
 build-type:          Simple
